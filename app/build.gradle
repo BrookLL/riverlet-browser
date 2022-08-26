@@ -1,0 +1,80 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdk COMPILE_SDK as int
+
+    defaultConfig {
+        applicationId "com.riverlet.browser"
+        minSdk MIN_SDK as int
+        targetSdk TARGET_SDK as int
+        versionCode VERSION_CODE as int
+        versionName VERSION_NAME
+
+    }
+    signingConfigs {
+        release {
+            storeFile file('browser.jks')
+            storePassword 'riverlet55'
+            keyPassword 'riverlet55'
+            keyAlias 'riverlet-browser'
+        }
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def outputFile = outputFileName
+            def date = new Date().format("yyyyMMdd_HHmm")
+            if (outputFile != null && outputFile.endsWith('.apk')) {
+                def fileName
+                if (outputFile.contains("debug")) {
+                    fileName = "BrowserLite_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${date}_debug.apk"
+                } else if (outputFile.contains("release")) {
+                    fileName = "BrowserLite_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${date}_release.apk"
+                }
+                outputFileName = fileName
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.annotation:annotation:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+    def ktxCoroutinesVersion = '1.6.4'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:ktxCoroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:ktxCoroutinesVersion"
+}
